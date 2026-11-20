@@ -1,0 +1,84 @@
+# Publishes the plugin to WordPress.org when a GitHub release is published.
+#
+# Runs on blocklayouts/enable-hover-color only (not on forks). Uses the blocklayouts
+# organization secrets (Organization settings → Secrets and variables → Actions),
+# which must give this repository access:
+# - SVN_USERNAME: the WordPress.org username with commit access to the plugin
+# - SVN_PASSWORD: that user's SVN password from WordPress.org → Edit profile →
+#   Account & Security (not the login password)
+# A repository secret with the same name overrides the organization one, so
+# don't add these secrets to the repository itself.
+name: Deploy to WordPress.org
+
+on:
+  release:
+    # Only full releases; pre-releases are not deployed.
+    types: [released]
+
+permissions:
+  # Needed to attach the zip to the release.
+  contents: write
+
+jobs:
+  deploy:
+    name: Deploy to WordPress.org
+    if: github.repository == 'blocklayouts/enable-hover-color'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Check the WordPress.org SVN credentials are set
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+        run: |
+          if [ -z "$SVN_USERNAME" ] || [ -z "$SVN_PASSWORD" ]; then
+            echo "::error::SVN_USERNAME and/or SVN_PASSWORD are not available. Check the blocklayouts organization secrets exist and give this repository access."
+            exit 1
+          fi
+          echo "Deploying as WordPress.org user: $SVN_USERNAME"
+
+      - name: Check version numbers match the release tag
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          HEADER=$(grep -m1 -E '^\s*\*\s*Version:' enable-hover-color.php | awk '{print $NF}' | tr -d '\r')
+          STABLE=$(grep -m1 -i '^Stable tag:' readme.txt | awk '{print $NF}' | tr -d '\r')
+          PACKAGE=$(node -p "require('./package.json').version")
+
+          echo "Release tag: $VERSION"
+          echo "Plugin header: $HEADER | Stable tag: $STABLE | package.json: $PACKAGE"
+
+          for FOUND in "$HEADER" "$STABLE" "$PACKAGE"; do
+            if [ "$FOUND" != "$VERSION" ]; then
+              echo "::error::The release tag is $VERSION, but the plugin files say $FOUND. Update the version in enable-hover-color.php, readme.txt (Stable tag) and package.json, then release again."
+              exit 1
+            fi
+          done
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Deploy to WordPress.org
+        id: deploy
+        uses: 10up/action-wordpress-plugin-deploy@stable
+        with:
+          generate-zip: true
+        env:
+          ASSETS_DIR: _wordpress-org
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+
+      - name: Attach the zip to the GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.deploy.outputs.zip-path }}

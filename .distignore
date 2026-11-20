@@ -1,0 +1,14 @@
+# Files and folders that are not deployed to WordPress.org.
+# Used by .github/workflows/deploy.yml (rsync exclude patterns, one per line).
+
+/.git
+/.github
+/_wordpress-org
+/node_modules
+/.distignore
+/.editorconfig
+/.gitignore
+/package.json
+/package-lock.json
+/README.md
+*.zip

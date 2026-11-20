@@ -2,7 +2,7 @@
 /**
  * Plugin Name:         Enable Hover Color
  * Description:         Add hover colors to core blocks in the WordPress block editor (Gutenberg)
- * Version:             1.0.0
+ * Version:             1.0.1
  * Requires at least:   6.3
  * Requires PHP:        7.4
  * Author:              Qara Yahya
@@ -17,6 +17,8 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
+
+define( 'ENABLE_HOVER_COLOR_VERSION', '1.0.1' );
 
 /**
  * Enqueue block editor assets.
@@ -47,7 +49,7 @@ function enable_hover_color_enqueue_block_styles() {
 		'enable-hover-color-block-styles',
 		plugins_url( '/build/style.css', __FILE__ ),
 		array(),
-		'1.0.0'
+		ENABLE_HOVER_COLOR_VERSION
 	);
 }
 add_action( 'enqueue_block_assets', 'enable_hover_color_enqueue_block_styles' );

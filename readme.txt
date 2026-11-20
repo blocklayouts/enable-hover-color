@@ -1,9 +1,9 @@
 === Enable Hover Color ===
-Contributors:       qarayahya
+Contributors:       blocklayouts, qarayahya
 Tags:               gutenberg hover, block hover, hover, color hover
 Requires at least:  6.3
-Tested up to:       6.7
-Stable tag:         1.0.0
+Tested up to:       7.1
+Stable tag:         1.0.1
 License:            GPL-2.0-or-later
 License URI:        https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -43,6 +43,11 @@ Yes, you can adjust the transition duration through the block settings panel.
 3. Customization options
 
 == Changelog ==
+
+= 1.0.1 =
+
+* Tested with WordPress 7.1.
+* Fixed: The stylesheet version now follows the plugin version, so browsers load the updated CSS after an update.
 
 = 1.0.0 =
 * Initial release
