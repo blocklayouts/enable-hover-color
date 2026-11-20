@@ -6,7 +6,7 @@
  * Requires at least:   6.3
  * Requires PHP:        7.4
  * Author:              Qara Yahya
- * Author URI:          https://blocklayouts.com/author/qarayahya/
+ * Author URI:          https://blocklayouts.com/
  * License:             GPL-2.0-or-later
  * License URI:         https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:         enable-hover-color
