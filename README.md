@@ -63,7 +63,3 @@ This project is licensed under the GPL-2.0-or-later - see the [LICENSE](LICENSE.
 
 ### 1.0.0
 - Initial release
-
-## Author
-
-- [Yahya Qara](https://github.com/qarayahya) 
