@@ -22,7 +22,7 @@ const HoverColorsControls = ({
 			value: hoverTextColor?.color,
 			onChange: setHoverTextColor,
 			isShownByDefault: false,
-			label: __("Hover Text"),
+			label: __("Hover Text", "enable-hover-color"),
 			resetAllFilter: () => ({
 				hoverTextColor: undefined,
 				customHoverTextColor: undefined,
@@ -32,7 +32,7 @@ const HoverColorsControls = ({
 			value: hoverBackgroundColor?.color,
 			onChange: setHoverBackgroundColor,
 			isShownByDefault: false,
-			label: __("Hover Background"),
+			label: __("Hover Background", "enable-hover-color"),
 			resetAllFilter: () => ({
 				hoverBackgroundColor: undefined,
 				customHoverBackgroundColor: undefined,
@@ -42,7 +42,7 @@ const HoverColorsControls = ({
 			value: hoverBorderColor?.color,
 			onChange: setHoverBorderColor,
 			isShownByDefault: false,
-			label: __("Hover Border"),
+			label: __("Hover Border", "enable-hover-color"),
 			resetAllFilter: () => ({
 				hoverBorderColor: undefined,
 				customHoverBorderColor: undefined,

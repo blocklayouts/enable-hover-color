@@ -2,7 +2,7 @@
 /**
  * Plugin Name:         Enable Hover Color
  * Description:         Add hover colors to core blocks in the WordPress block editor (Gutenberg)
- * Version:             1.0.1
+ * Version:             1.0.2
  * Requires at least:   6.3
  * Requires PHP:        7.4
  * Author:              Blocklayouts
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-define( 'ENABLE_HOVER_COLOR_VERSION', '1.0.1' );
+define( 'ENABLE_HOVER_COLOR_VERSION', '1.0.2' );
 
 /**
  * Enqueue block editor assets.
@@ -55,6 +55,55 @@ function enable_hover_color_enqueue_block_styles() {
 add_action( 'enqueue_block_assets', 'enable_hover_color_enqueue_block_styles' );
 
 /**
+ * Validates a preset color slug.
+ *
+ * @since 1.0.2
+ *
+ * @param mixed $slug Preset color slug from the block attributes.
+ * @return string The slug, or an empty string when it is not valid.
+ */
+function enable_hover_color_sanitize_preset_slug( $slug ) {
+	if ( ! is_string( $slug ) || ! preg_match( '/^[a-zA-Z0-9_-]+$/', $slug ) ) {
+		return '';
+	}
+	return $slug;
+}
+
+/**
+ * Validates a custom color value.
+ *
+ * Accepts hex colors, rgb()/rgba()/hsl()/hsla() functions, preset color
+ * variables and plain color keywords. Anything else is rejected so no extra
+ * CSS can be added through the attribute.
+ *
+ * @since 1.0.2
+ *
+ * @param mixed $color Custom color from the block attributes.
+ * @return string The color, or an empty string when it is not valid.
+ */
+function enable_hover_color_sanitize_custom_color( $color ) {
+	if ( ! is_string( $color ) ) {
+		return '';
+	}
+
+	$color    = trim( $color );
+	$patterns = array(
+		'/^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/',
+		'/^(?:rgb|rgba|hsl|hsla)\(\s*[0-9.,%\s\/+-]+(?:deg|rad|turn)?[0-9.,%\s\/+-]*\)$/i',
+		'/^var\(--wp--preset--color--[a-zA-Z0-9_-]+\)$/',
+		'/^[a-zA-Z]+$/',
+	);
+
+	foreach ( $patterns as $pattern ) {
+		if ( preg_match( $pattern, $color ) ) {
+			return $color;
+		}
+	}
+
+	return '';
+}
+
+/**
  * Filters the block content to add hover color classes and styles.
  *
  * @param string $block_content The block content.
@@ -71,74 +120,44 @@ function enable_hover_color_render_block( $block_content, $block ) {
 	$hover_styles  = array();
 	$hover_classes = array();
 
-	// Helper function to get color value.
-	$get_preset_color_value = function ( $preset_color ) {
-		return sprintf( 'var(--wp--preset--color--%s)', $preset_color );
-	};
-
-	// Add transition duration.
-	if ( ! empty( $attrs['hoverTransitionDuration'] ) ) {
-		$duration       = $attrs['hoverTransitionDuration'];
-		$hover_styles[] = sprintf( '--hover-transition-duration: %sms;', $duration );
+	// Add transition duration (whole milliseconds only).
+	if ( isset( $attrs['hoverTransitionDuration'] ) && is_numeric( $attrs['hoverTransitionDuration'] ) ) {
+		$hover_styles[] = sprintf( '--hover-transition-duration: %dms;', absint( $attrs['hoverTransitionDuration'] ) );
 	}
 
-	// Add transition timing function.
-	if ( ! empty( $attrs['hoverTransitionTiming'] ) ) {
-		$timing         = $attrs['hoverTransitionTiming'];
-		$hover_styles[] = sprintf( '--hover-transition-timing: %s;', $timing );
+	// Add transition timing function (only the values offered in the editor).
+	$allowed_timings = array( 'ease', 'linear', 'ease-in', 'ease-out', 'ease-in-out' );
+	if ( ! empty( $attrs['hoverTransitionTiming'] ) && in_array( $attrs['hoverTransitionTiming'], $allowed_timings, true ) ) {
+		$hover_styles[] = sprintf( '--hover-transition-timing: %s;', $attrs['hoverTransitionTiming'] );
 	}
 
-	// Add hover text color.
-	if ( ! empty( $attrs['hoverTextColor'] ) ) {
+	// Preset and custom attribute for each hover color: CSS variable => [preset attr, custom attr, class].
+	$color_settings = array(
+		'--hover-color'            => array( 'hoverTextColor', 'customHoverTextColor', 'has-hover__color' ),
+		'--hover-background-color' => array( 'hoverBackgroundColor', 'customHoverBackgroundColor', 'has-hover__background-color' ),
+		'--hover-border-color'     => array( 'hoverBorderColor', 'customHoverBorderColor', 'has-hover__border-color' ),
+	);
 
-		$hover_classes[] = 'has-hover__color';
-		$color           = $get_preset_color_value( $attrs['hoverTextColor'] );
-		if ( $color ) {
-			$hover_styles[] = sprintf( '--hover-color: %s;', $color );
+	foreach ( $color_settings as $css_var => $setting ) {
+		list( $preset_attr, $custom_attr, $class ) = $setting;
+
+		$color = '';
+		if ( ! empty( $attrs[ $preset_attr ] ) ) {
+			$slug = enable_hover_color_sanitize_preset_slug( $attrs[ $preset_attr ] );
+			if ( '' !== $slug ) {
+				$color = sprintf( 'var(--wp--preset--color--%s)', $slug );
+			}
 		}
-	}
-	if ( ! empty( $attrs['customHoverTextColor'] ) ) {
-
-		$hover_classes[] = 'has-hover__color';
-		$color           = $attrs['customHoverTextColor'];
-		if ( $color ) {
-			$hover_styles[] = sprintf( '--hover-color: %s;', $color );
+		if ( ! empty( $attrs[ $custom_attr ] ) ) {
+			$custom = enable_hover_color_sanitize_custom_color( $attrs[ $custom_attr ] );
+			if ( '' !== $custom ) {
+				$color = $custom;
+			}
 		}
-	}
 
-	// Add hover background color.
-	if ( ! empty( $attrs['hoverBackgroundColor'] ) ) {
-
-		$hover_classes[] = 'has-hover__background-color';
-		$color           = $get_preset_color_value( $attrs['hoverBackgroundColor'] );
-		if ( $color ) {
-			$hover_styles[] = sprintf( '--hover-background-color: %s;', $color );
-		}
-	}
-	if ( ! empty( $attrs['customHoverBackgroundColor'] ) ) {
-
-		$hover_classes[] = 'has-hover__background-color';
-		$color           = $attrs['customHoverBackgroundColor'];
-		if ( $color ) {
-			$hover_styles[] = sprintf( '--hover-background-color: %s;', $color );
-		}
-	}
-
-	// Add hover border color.
-	if ( ! empty( $attrs['hoverBorderColor'] ) ) {
-
-		$hover_classes[] = 'has-hover__border-color';
-		$color           = $get_preset_color_value( $attrs['hoverBorderColor'] );
-		if ( $color ) {
-			$hover_styles[] = sprintf( '--hover-border-color: %s;', $color );
-		}
-	}
-	if ( ! empty( $attrs['customHoverBorderColor'] ) ) {
-
-		$hover_classes[] = 'has-hover__border-color';
-		$color           = $attrs['customHoverBorderColor'];
-		if ( $color ) {
-			$hover_styles[] = sprintf( '--hover-border-color: %s;', $color );
+		if ( '' !== $color ) {
+			$hover_classes[] = $class;
+			$hover_styles[]  = sprintf( '%s: %s;', $css_var, $color );
 		}
 	}
 
@@ -153,15 +172,15 @@ function enable_hover_color_render_block( $block_content, $block ) {
 	// Process the first HTML tag.
 	if ( $processor->next_tag() ) {
 		// Add hover classes.
-		foreach ( $hover_classes as $class ) {
+		foreach ( array_unique( $hover_classes ) as $class ) {
 			$processor->add_class( $class );
 		}
 
 		// Add or merge style attribute.
 		$style          = implode( ' ', $hover_styles );
 		$existing_style = $processor->get_attribute( 'style' );
-		if ( $existing_style ) {
-			$style = $existing_style . ';' . $style;
+		if ( is_string( $existing_style ) && '' !== trim( $existing_style ) ) {
+			$style = rtrim( trim( $existing_style ), ';' ) . '; ' . $style;
 		}
 		$processor->set_attribute( 'style', $style );
 
