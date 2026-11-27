@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:         Enable Hover Color
+ * Plugin Name:         Blocklayouts Hover Color Controls
  * Description:         Add hover colors to core blocks in the WordPress block editor (Gutenberg)
  * Version:             1.0.2
  * Requires at least:   6.3
@@ -9,50 +9,50 @@
  * Author URI:          https://blocklayouts.com/
  * License:             GPL-2.0-or-later
  * License URI:         https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:         enable-hover-color
+ * Text Domain:         blocklayouts-hover-color-controls
  *
- * @package enable-hover-color
+ * @package blocklayouts-hover-color-controls
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-define( 'ENABLE_HOVER_COLOR_VERSION', '1.0.2' );
+define( 'BLOCKLAYOUTS_HOVER_COLOR_CONTROLS_VERSION', '1.0.2' );
 
 /**
  * Enqueue block editor assets.
  *
  * @since 1.0.0
  */
-function enable_hover_color_enqueue_editor_assets() {
+function blocklayouts_hover_color_controls_enqueue_editor_assets() {
 
 	$asset_file = include plugin_dir_path( __FILE__ ) . 'build/index.asset.php';
 
 	wp_enqueue_script(
-		'enable-hover-color-editor-scripts',
+		'blocklayouts-hover-color-controls-editor-scripts',
 		plugin_dir_url( __FILE__ ) . 'build/index.js',
 		$asset_file['dependencies'],
 		$asset_file['version'],
 		true
 	);
 }
-add_action( 'enqueue_block_editor_assets', 'enable_hover_color_enqueue_editor_assets' );
+add_action( 'enqueue_block_editor_assets', 'blocklayouts_hover_color_controls_enqueue_editor_assets' );
 
 /**
  * Register and enqueue stylesheet for the editor & frontend.
  *
  * @since 1.0.0
  */
-function enable_hover_color_enqueue_block_styles() {
+function blocklayouts_hover_color_controls_enqueue_block_styles() {
 	wp_enqueue_style(
-		'enable-hover-color-block-styles',
+		'blocklayouts-hover-color-controls-block-styles',
 		plugins_url( '/build/style.css', __FILE__ ),
 		array(),
-		ENABLE_HOVER_COLOR_VERSION
+		BLOCKLAYOUTS_HOVER_COLOR_CONTROLS_VERSION
 	);
 }
-add_action( 'enqueue_block_assets', 'enable_hover_color_enqueue_block_styles' );
+add_action( 'enqueue_block_assets', 'blocklayouts_hover_color_controls_enqueue_block_styles' );
 
 /**
  * Validates a preset color slug.
@@ -62,7 +62,7 @@ add_action( 'enqueue_block_assets', 'enable_hover_color_enqueue_block_styles' );
  * @param mixed $slug Preset color slug from the block attributes.
  * @return string The slug, or an empty string when it is not valid.
  */
-function enable_hover_color_sanitize_preset_slug( $slug ) {
+function blocklayouts_hover_color_controls_sanitize_preset_slug( $slug ) {
 	if ( ! is_string( $slug ) || ! preg_match( '/^[a-zA-Z0-9_-]+$/', $slug ) ) {
 		return '';
 	}
@@ -81,7 +81,7 @@ function enable_hover_color_sanitize_preset_slug( $slug ) {
  * @param mixed $color Custom color from the block attributes.
  * @return string The color, or an empty string when it is not valid.
  */
-function enable_hover_color_sanitize_custom_color( $color ) {
+function blocklayouts_hover_color_controls_sanitize_custom_color( $color ) {
 	if ( ! is_string( $color ) ) {
 		return '';
 	}
@@ -110,7 +110,7 @@ function enable_hover_color_sanitize_custom_color( $color ) {
  * @param array  $block The full block, including name and attributes.
  * @return string Modified block content.
  */
-function enable_hover_color_render_block( $block_content, $block ) {
+function blocklayouts_hover_color_controls_render_block( $block_content, $block ) {
 	// Return early if no block content or attributes.
 	if ( empty( $block_content ) || empty( $block['attrs'] ) ) {
 		return $block_content;
@@ -143,13 +143,13 @@ function enable_hover_color_render_block( $block_content, $block ) {
 
 		$color = '';
 		if ( ! empty( $attrs[ $preset_attr ] ) ) {
-			$slug = enable_hover_color_sanitize_preset_slug( $attrs[ $preset_attr ] );
+			$slug = blocklayouts_hover_color_controls_sanitize_preset_slug( $attrs[ $preset_attr ] );
 			if ( '' !== $slug ) {
 				$color = sprintf( 'var(--wp--preset--color--%s)', $slug );
 			}
 		}
 		if ( ! empty( $attrs[ $custom_attr ] ) ) {
-			$custom = enable_hover_color_sanitize_custom_color( $attrs[ $custom_attr ] );
+			$custom = blocklayouts_hover_color_controls_sanitize_custom_color( $attrs[ $custom_attr ] );
 			if ( '' !== $custom ) {
 				$color = $custom;
 			}
@@ -189,4 +189,4 @@ function enable_hover_color_render_block( $block_content, $block ) {
 
 	return $block_content;
 }
-add_filter( 'render_block', 'enable_hover_color_render_block', 10, 2 );
+add_filter( 'render_block', 'blocklayouts_hover_color_controls_render_block', 10, 2 );

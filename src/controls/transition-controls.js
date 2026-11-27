@@ -17,11 +17,11 @@ const HoverTransitionControls = ({ attributes, setAttributes }) => {
 	} = attributes;
 
 	const timingOptions = [
-		{ label: __("Ease", "enable-hover-color"), value: "ease" },
-		{ label: __("Linear", "enable-hover-color"), value: "linear" },
-		{ label: __("Ease-in", "enable-hover-color"), value: "ease-in" },
-		{ label: __("Ease-out", "enable-hover-color"), value: "ease-out" },
-		{ label: __("Ease-in-out", "enable-hover-color"), value: "ease-in-out" },
+		{ label: __("Ease", "blocklayouts-hover-color-controls"), value: "ease" },
+		{ label: __("Linear", "blocklayouts-hover-color-controls"), value: "linear" },
+		{ label: __("Ease-in", "blocklayouts-hover-color-controls"), value: "ease-in" },
+		{ label: __("Ease-out", "blocklayouts-hover-color-controls"), value: "ease-out" },
+		{ label: __("Ease-in-out", "blocklayouts-hover-color-controls"), value: "ease-in-out" },
 	];
 
 	return (
@@ -33,7 +33,7 @@ const HoverTransitionControls = ({ attributes, setAttributes }) => {
 				hoverBackgroundColor ||
 				hoverBorderColor) && (
 				<div
-					className="enable-hover-color__transition-controls"
+					className="blocklayouts-hover-color-controls__transition-controls"
 					style={{
 						gridTemplateColumns: "repeat(2, minmax(0px, 1fr))",
 						gap: "calc(16px)",
@@ -43,7 +43,7 @@ const HoverTransitionControls = ({ attributes, setAttributes }) => {
 					<RangeControl
 						__next40pxDefaultSize
 						__nextHasNoMarginBottom
-						label={__("Transition Duration", "enable-hover-color")}
+						label={__("Transition Duration", "blocklayouts-hover-color-controls")}
 						value={hoverTransitionDuration}
 						onChange={(value) =>
 							setAttributes({ hoverTransitionDuration: value })
@@ -52,13 +52,13 @@ const HoverTransitionControls = ({ attributes, setAttributes }) => {
 						max={2000}
 						step={50}
 						initialPosition={200}
-						help={__("Duration in milliseconds", "enable-hover-color")}
+						help={__("Duration in milliseconds", "blocklayouts-hover-color-controls")}
 					/>
 
 					<SelectControl
 						__next40pxDefaultSize
 						__nextHasNoMarginBottom
-						label={__("Timing Function", "enable-hover-color")}
+						label={__("Timing Function", "blocklayouts-hover-color-controls")}
 						value={hoverTransitionTiming}
 						options={timingOptions}
 						onChange={(value) =>

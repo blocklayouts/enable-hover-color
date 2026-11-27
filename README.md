@@ -1,12 +1,12 @@
-# Enable Hover Color
+# Blocklayouts Hover Color Controls
 
-![Enable Hover Color](https://github.com/blocklayouts/enable-hover-color/blob/master/_wordpress-org/banner-1544x500.png) 
+![Blocklayouts Hover Color Controls](https://github.com/blocklayouts/enable-hover-color/blob/master/_wordpress-org/banner-1544x500.png) 
 
 Add hover color effects to your Gutenberg blocks easily with customizable transitions.
 
 ## Description
 
-Enable Hover Color is a WordPress plugin that allows you to add hover effects to any Gutenberg block that supports color settings. Customize background colors, text colors, and transition timing for engaging hover interactions.
+Blocklayouts Hover Color Controls is a WordPress plugin that allows you to add hover effects to any Gutenberg block that supports color settings. Customize background colors, text colors, and transition timing for engaging hover interactions.
 
 ### Features
 
@@ -23,7 +23,7 @@ Enable Hover Color is a WordPress plugin that allows you to add hover effects to
 
 ## Installation
 
-1. Upload the plugin files to the `/wp-content/plugins/enable-hover-color` directory, or install the plugin through the WordPress plugins screen
+1. Upload the plugin files to the `/wp-content/plugins/blocklayouts-hover-color-controls` directory, or install the plugin through the WordPress plugins screen
 2. Activate the plugin through the 'Plugins' screen in WordPress
 3. Use the Block Editor to add hover effects to any block that supports color settings
 

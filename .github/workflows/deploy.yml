@@ -42,7 +42,7 @@ jobs:
       - name: Check version numbers match the release tag
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
-          HEADER=$(grep -m1 -E '^\s*\*\s*Version:' enable-hover-color.php | awk '{print $NF}' | tr -d '\r')
+          HEADER=$(grep -m1 -E '^\s*\*\s*Version:' blocklayouts-hover-color-controls.php | awk '{print $NF}' | tr -d '\r')
           STABLE=$(grep -m1 -i '^Stable tag:' readme.txt | awk '{print $NF}' | tr -d '\r')
           PACKAGE=$(node -p "require('./package.json').version")
 
@@ -51,7 +51,7 @@ jobs:
 
           for FOUND in "$HEADER" "$STABLE" "$PACKAGE"; do
             if [ "$FOUND" != "$VERSION" ]; then
-              echo "::error::The release tag is $VERSION, but the plugin files say $FOUND. Update the version in enable-hover-color.php, readme.txt (Stable tag) and package.json, then release again."
+              echo "::error::The release tag is $VERSION, but the plugin files say $FOUND. Update the version in blocklayouts-hover-color-controls.php, readme.txt (Stable tag) and package.json, then release again."
               exit 1
             fi
           done
@@ -75,6 +75,7 @@ jobs:
           generate-zip: true
         env:
           ASSETS_DIR: _wordpress-org
+          SLUG: blocklayouts-hover-color-controls
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
 

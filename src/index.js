@@ -30,7 +30,7 @@ import HoverTransitionControls from "./controls/transition-controls";
  */
 addFilter(
 	"blocks.registerBlockType",
-	"enable-hover-color/add-attributes",
+	"blocklayouts-hover-color-controls/add-attributes",
 	function (settings, name) {
 		// Checks if the block supports text color.
 		const hasTextColorSupport = () => {
@@ -90,7 +90,7 @@ addFilter(
  */
 addFilter(
 	"editor.BlockEdit",
-	"enable-hover-color/add-inspector-controls",
+	"blocklayouts-hover-color-controls/add-inspector-controls",
 	createHigherOrderComponent((BlockEdit) => {
 		return (props) => {
 			const { name, attributes, setAttributes, clientId } = props;
@@ -135,7 +135,7 @@ addFilter(
  */
 addFilter(
 	"editor.BlockListBlock",
-	"enable-hover-color/add-styles",
+	"blocklayouts-hover-color-controls/add-styles",
 	createHigherOrderComponent((BlockListBlock) => {
 		return (props) => {
 			const { name, attributes } = props;

@@ -22,7 +22,7 @@ const HoverColorsControls = ({
 			value: hoverTextColor?.color,
 			onChange: setHoverTextColor,
 			isShownByDefault: false,
-			label: __("Hover Text", "enable-hover-color"),
+			label: __("Hover Text", "blocklayouts-hover-color-controls"),
 			resetAllFilter: () => ({
 				hoverTextColor: undefined,
 				customHoverTextColor: undefined,
@@ -32,7 +32,7 @@ const HoverColorsControls = ({
 			value: hoverBackgroundColor?.color,
 			onChange: setHoverBackgroundColor,
 			isShownByDefault: false,
-			label: __("Hover Background", "enable-hover-color"),
+			label: __("Hover Background", "blocklayouts-hover-color-controls"),
 			resetAllFilter: () => ({
 				hoverBackgroundColor: undefined,
 				customHoverBackgroundColor: undefined,
@@ -42,7 +42,7 @@ const HoverColorsControls = ({
 			value: hoverBorderColor?.color,
 			onChange: setHoverBorderColor,
 			isShownByDefault: false,
-			label: __("Hover Border", "enable-hover-color"),
+			label: __("Hover Border", "blocklayouts-hover-color-controls"),
 			resetAllFilter: () => ({
 				hoverBorderColor: undefined,
 				customHoverBorderColor: undefined,
